@@ -1,0 +1,173 @@
+syntax = "proto3";
+
+package iticapital;
+
+// Enumeration of portfolio statuses
+enum PortfolioStatus {
+    BROKER = 0;
+    TRUSTED_MANAGEMENT = 1;
+    READ_ONLY = 2;
+    BLOCKED = 3;
+    RESTRICTED = 4;
+    AUTO_RESTRICTED = 5;
+    ORDER_NOT_SIGNED = 6;
+}
+
+// Empty stub: when method hasn't params or nothing to return
+message Nothing {}
+
+// Default response with queue name, which contains events from method call
+message Response {
+    string queue = 1;
+}
+
+// Response for method with two events queues: success and fails
+message ResponseWithFailed {
+    string queueSucceed = 1;
+    string queueFailed = 2;
+}
+
+// Response for ListenPortfolio method: contains queue names for all method events
+message ListenPortfolioResponse {
+    string setPortfolioQueue = 1;
+    string addTradeQueue = 2;
+    string updateOrderQueue = 3;
+    string updatePositionQueue = 4;
+}
+
+// Response for ListenPortfolio method: contains queue names for all method events
+message GetMyPortfolioDataResponse {
+    string myTradeQueue = 1;
+    string myClosePosQueue = 2;
+    string myOrderQueue = 3;
+}
+
+// Symbol param for methods, which return operations over stock listings
+message Symbol {
+    string value = 1;
+}
+
+// Portfolio param for method, which return operations over portfolio
+message Portfolio {
+    string value = 1;
+}
+
+message GetBarsRequest {
+    enum Interval {
+        INVALID = 0;
+        MIN = 1;
+        FIVE_MIN = 2;
+        TEN_MIN = 3;
+        FIFTEEN_MIN = 4;
+        THIRTY_MIN = 5;
+        HOUR = 6;
+        TWO_HOUR = 7;
+        FOUR_HOUR = 8;
+        DAY = 9;
+        WEEK = 10;
+        MONTH = 11;
+        QUARTER = 12;
+        YEAR = 13;
+    }
+
+    Symbol symbol = 1;
+    Interval interval = 2;
+    int64 since = 3;
+    int64 count = 4;
+}
+
+message OrderCancelRequest {
+    Portfolio portfolio = 1;
+    Symbol symbol = 2;
+    string orderId = 3;
+}
+
+message ConnectRequest {
+    string ip = 1;
+    uint64 port = 2;
+    string login = 3;
+    string password = 4;
+}
+
+message GetMyPortfolioDataRequest {
+    enum Mode {
+        INVALID = 0;
+        ACTIVE = 1;
+        ALL = 2;
+    }
+
+    Mode mode = 1;
+    Portfolio portfolio = 2;
+}
+
+message GetTradesRequest {
+    Symbol symbol = 1;
+    string from = 2;
+    int32 count = 3;
+}
+
+message IsConnectedResponse {
+    bool value = 1;
+}
+
+message MoveOrderRequest {
+    Portfolio portfolio = 1;
+    Symbol symbol = 2;
+    string orderId = 3;
+    double targetPrice = 4;
+}
+
+message PlaceOrderRequest {
+    enum Action {
+        INVALID_ACTION = 0;
+        BUY = 1;
+        SELL = 2;
+        SHORT = 3;
+        COVER = 4;
+    }
+
+    enum Type {
+        INVALID_TYPE = 0;
+        MARKET = 1;
+        LIMIT = 2;
+        STOP = 3;
+        STOP_LIMIT = 4;
+    }
+
+    enum Validity {
+        INVALID_VALIDITY = 0;
+        DAY = 1;
+        GTC = 2;
+    }
+
+    Portfolio portfolio = 1;
+    Symbol symbol = 2;
+    Action action = 3;
+    Type type = 4;
+    Validity validity = 5;
+    double price = 6;
+    double amount = 7;
+    double priceStop = 8;
+    int32 uniqueId = 9;
+}
+
+service ITICapitalAPI {
+    rpc CancelBidAsk(Symbol) returns (Nothing) {}
+    rpc CancelOrder(OrderCancelRequest) returns (ResponseWithFailed) {}
+    rpc CancelPortfolio(Portfolio) returns (Nothing) {}
+    rpc CancelQuotes(Symbol) returns (Nothing) {}
+    rpc CancelTicks(Symbol) returns (Nothing) {}
+    rpc Connect(ConnectRequest) returns (Response) {}
+    rpc GetBars(GetBarsRequest) returns (Response) {}
+    rpc GetMyPortfolioData(GetMyPortfolioDataRequest) returns (GetMyPortfolioDataResponse) {}
+    rpc GetPortfolioList(Nothing) returns (Response) {}
+    rpc GetTrades(GetTradesRequest) returns (Response) {}
+    rpc GetSymbols(Nothing) returns (Response) {}
+    rpc IsConnected(Nothing) returns (IsConnectedResponse) {}
+    rpc ListenBidAsks(Symbol) returns (Response) {}
+    rpc ListenPortfolio(Portfolio) returns (ListenPortfolioResponse) {}
+    rpc ListenQuotes(Symbol) returns (Response) {}
+    rpc ListenTicks(Symbol) returns (Response) {}
+    rpc MoveOrder(MoveOrderRequest) returns (ResponseWithFailed) {}
+    rpc PlaceOrder(PlaceOrderRequest) returns (ResponseWithFailed) {}
+}
