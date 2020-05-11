@@ -1,0 +1,15 @@
+version: '3'
+services:
+  grpc-server:
+    container_name: iticapital-grpc
+    build:
+      context: .
+      dockerfile: ITICapitalServer.Dockerfile
+    restart: on-failure
+    environment:
+      - SMARTCOM_SERVER_HOST=${SMARTCOM_SERVER_HOST}
+      - SMARTCOM_SERVER_PORT=${SMARTCOM_SERVER_PORT}
+      - SMARTCOM_SERVER_LOGIN=${SMARTCOM_SERVER_LOGIN}
+      - SMARTCOM_SERVER_PASSWORD=${SMARTCOM_SERVER_PASSWORD}
+      - KAFKA_PRODUCER_HOST=${KAFKA_PRODUCER_HOST}
+      - GRPC_PORT=${GRPC_PORT}
