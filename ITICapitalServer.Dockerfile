@@ -6,6 +6,9 @@ RUN powershell Remove-Item C:\SmartCOM_x64.msi -Force
 
 WORKDIR /app
 COPY ITICapitalServer/bin/Release/Current .
+
+EXPOSE ${GRPC_PORT}
+
 ENTRYPOINT ["ITICapitalServer.exe"]
 
 #FROM mcr.microsoft.com/dotnet/framework/sdk:4.8 AS build
