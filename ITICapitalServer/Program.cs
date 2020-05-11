@@ -36,21 +36,34 @@ namespace ITICapitalServer
             );
 
             var brokerService = new BrokerService(smartCom, logger);
-            
+
             Server server = new Server
             {
                 Services = {ITICapitalAPI.BindService(brokerService)},
                 Ports = {gRpcPort}
             };
             server.Start();
-            
+
             logger.Write($"Start gRPC on {gRpcPort.Host}:{gRpcPort.Port}");
             logger.Write($"Listen kafka on {kafkaConfig.BootstrapServers}");
-            logger.Write("Press any key to exit...");
-            Console.ReadKey();
+
+            var isStopped = false;
+            AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) =>
+            {
+                isStopped = true;
+                logger.Write("Stop signal");
+            };
+
+            while (!isStopped)
+            {
+            }
+            
+            logger.Write("Stopping gRPC and SmartCOM...");
 
             smartCom.disconnect();
             server.ShutdownAsync().Wait();
+            
+            logger.Write("Stopped");
         }
     }
 }
