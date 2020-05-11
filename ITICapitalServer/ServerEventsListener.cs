@@ -393,7 +393,7 @@ namespace ITICapitalServer
             );
         }
 
-        private void OnAddSymbol(int row, int rowsCount, string symbol, string shortName, string longName,
+        private void OnAddSymbol(int row, int rowsCount, string symbol, string longName, string shortName,
             string type, int decimals, int lotSize, double priceStepPoint, double step, string secExtId,
             string secExchangeName, DateTime expiryDate, double daysBeforeExpiry, double strike)
         {
